@@ -2,34 +2,45 @@ import random
 
 class User:
 
-    def __init__(self):
-        self.user_id = -1
-        self.username = ""
-        self.password = ""
+    def __init__(self, user_id = -1, username = "", password = ""):
+        self.user_id = user_id
+        self.username = username
+        self.password = password
+
 
     def generate_unique_user_id(self):
-       self.user_id = ""
+       str_user_id = ""
        user_id_existing = False
        while not user_id_existing:
           for each in range(0,10):
-             self.user_id += str(random.randint(0,9))
+             str_user_id += str(random.randint(0,9))
+
           file_handle_admin = open('user_admin.txt', 'r')
-          if self.user_id not in file_handle_admin:
-              user_id_existing = False
-          else:
-              user_id_existing = True
+          for line in file_handle_admin:
+            if str_user_id not in line:
+                self.user_id = int(str_user_id)
+                user_id_existing = False
+            else:
+                user_id_existing = True
+          file_handle_admin.close()
+
           file_handle_instructor = open('user_instructor.txt', 'r')
-          if self.user_id not in file_handle_instructor:
-              user_id_existing = False
-          else:
-              user_id_existing = True
+          for line in file_handle_instructor:
+            if str_user_id not in file_handle_instructor:
+                self.user_id = int(str_user_id)
+                user_id_existing = False
+            else:
+                user_id_existing = True
+          file_handle_instructor.close()
+
           file_handle_student = open('user_student.txt', 'r')
-          if self.user_id not in file_handle_student:
+          if str_user_id not in file_handle_student:
+              self.user_id = int(str_user_id)
               user_id_existing = False
               break
           else:
               user_id_existing = True
-
+          file_handle_student.close()
        print(self.user_id)
        return self.user_id
 
@@ -68,12 +79,9 @@ class User:
         #concatinating the end character with the encrypted string
         encrypted += end_character 
         #returning the encrypted string 
-        print(encrypted)
         return encrypted
 
     def login(self):
-        self.username = "Akash"
-        self.password = "Akash123232"
         encrypted_password = self.encryption(self.password)
         file_handle_admin = open('user_admin.txt', 'r')
         for line in file_handle_admin:
@@ -81,6 +89,8 @@ class User:
               login_result = True
               login_user_role = "Admin"
               login_user_info = [self.user_id, self.username]
+              print(login_user_role)
+              print(login_user_info)
               return (login_result, login_user_role, login_user_info)
           else:
               login_result = False
@@ -128,18 +138,12 @@ class User:
         return str(self.user_id) + ";;;" + self.username + ";;;" + self.password
 
 
-
-
-
-
-
-
-user1 = User()
-user1.generate_unique_user_id()
-user1.encryption("Password")
-user1.login()
-user1.extract_info()
-user1.view_courses()
-user1.__str__()
+# user1 = User(1234567890, "akash", "akash1998")
+# user1.generate_unique_user_id()
+# user1.encryption("akash1998")
+# user1.login()
+# user1.extract_info()
+# user1.view_courses()
+# user1.__str__()
 
 
