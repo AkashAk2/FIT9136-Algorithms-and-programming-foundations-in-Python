@@ -1,4 +1,3 @@
-from asyncore import write
 import re
 from User import User
 
@@ -40,45 +39,30 @@ class Admin(User):
         file_handle_admin.close()
 
     def extract_course_info(self):
-        # file_handle_raw_data = open("data/course_data/raw_data.txt", 'r')
-        # pattern =
-        # for line in file_handle_raw_data:
-        # with open("./data/course_data/test.txt") as file_read:
-        #     data = file_read.read()
-        #     print(data)
-        #
-        #     print(extracted_item_data)
-        #     # for each in data:
-        #     #     for item in eval(each):
-        #     #         print(item['id'], item['title'], item['price'])
 
-        with open("./data/course_data/test.txt") as file_handle:
+        with open("./data/course_data/raw_data.txt") as file_handle:
             data = file_handle.read()
             new_data = data.replace("\n", "").replace("\t", "")
-            new_data
-
-
-
-
-                # extracted_item_data = re.findall(pattern, line)
-                # # print(extracted_item_data)
-                # # course id
-                # print(extracted_item_data)
-                # pat = r"_class\":\"course\",\"id\":[0-9]*,"
-                # ids = re.findall(pat, extracted_item_data[0])
-                # # print(ids)
-                # # for i in range(0, len(ids)):
-                # #     # ids[i] = re.findall(r"[0-9]*", ids[i])
-                # #     print(ids[i])
-                # # print(ids[0])
-                #
-                # for each in ids:
-                #     print(each)
-                #     # for item in eval(each):
-                #     #     print(item)
-
-                # data.append(extracted_item_data)
-        # print(data[3])
+            pattern = r'\_class":"course"\,(.*?)\,"url".*?"visible_instructors":\[\{(.*?)\,"id".*?"tracking_id":' \
+                      r'.*?,(.*?)\,"caption_locales".*?,\{"_class":"locale".*?]\,(.*?)\,"avg_rating_recent"' \
+                      r'.*?"instructor_name":.*?\,(.*?)\,"content_info_short"'
+            extracted_class_course = re.findall(pattern, new_data)
+            print(extracted_class_course)
+            # second_pattern = r'\"id\":([0-9]*)\,.*?\"title\":\"(.*?)\".*?\"image_100x100\":\"(.*?)\"' \
+            #                  r'.*?\"headline\":\"(.*?)\".*?\"num_subscribers\":(.*?)\',.*?\"avg_rating\":(.*?)\',' \
+            #                  r'.*?\'\"content_info\":\"([0-9.]*)'
+            # extracted_data = re.findall(second_pattern, ((str)(extracted_class_course)))
+            # course_file = open("./data/course_data/course.txt", 'w')
+            # # print(extracted_data)
+            # for each in extracted_data:
+            #     num = 0
+            #     for line in each:
+            #         for item in line:
+            #             course_file.write(line)
+            #             if num < len(item):
+            #                 course_file.write(";;;")
+            #                 num += 1
+            #         course_file.write("\n")
 
     def extract_review_info(self):
         pass
