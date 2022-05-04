@@ -40,20 +40,19 @@ class Admin(User):
 
     def extract_course_info(self):
 
-        with open("./data/course_data/raw_data.txt") as file_handle:
+        with open("./data/course_data/test.txt") as file_handle:
             data = file_handle.read()
             new_data = data.replace("\n", "").replace("\t", "")
             pattern = r'\_class":"course"\,(.*?)\,"url".*?"visible_instructors":\[\{(.*?)\,"id".*?"tracking_id":' \
                       r'.*?,(.*?)\,"caption_locales".*?,\{"_class":"locale".*?]\,(.*?)\,"avg_rating_recent"' \
                       r'.*?"instructor_name":.*?\,(.*?)\,"content_info_short"'
             extracted_class_course = re.findall(pattern, new_data)
-            print(extracted_class_course)
-            # second_pattern = r'\"id\":([0-9]*)\,.*?\"title\":\"(.*?)\".*?\"image_100x100\":\"(.*?)\"' \
-            #                  r'.*?\"headline\":\"(.*?)\".*?\"num_subscribers\":(.*?)\',.*?\"avg_rating\":(.*?)\',' \
-            #                  r'.*?\'\"content_info\":\"([0-9.]*)'
-            # extracted_data = re.findall(second_pattern, ((str)(extracted_class_course)))
-            # course_file = open("./data/course_data/course.txt", 'w')
-            # # print(extracted_data)
+            second_pattern = r'\"id\":([0-9]*)\,.*?\"title\":\"(.*?)\".*?\"image_100x100\":\"(.*?)\"' \
+                             r'.*?\"headline\":\"(.*?)\".*?\"num_subscribers\":(.*?)\',.*?\"avg_rating\":(.*?)\',' \
+                             r'.*?\'\"content_info\":\"([0-9.]*)'
+            extracted_data = re.findall(second_pattern, ((str)(extracted_class_course)))
+            course_file = open("./data/course_data/course.txt", 'w')
+            print(extracted_data)
             # for each in extracted_data:
             #     num = 0
             #     for line in each:
