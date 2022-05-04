@@ -46,9 +46,10 @@ class Admin(User):
                 pattern = r'\_class\":\"course\"\,\"id\":([0-9]*).*?\"title\":\"(.*?)\"' \
                           r'.*?\"headline\":\"(.*?)\".*?\"num_subscribers.*?\":(.*?)\,\"caption_locales' \
                           r'.*?\"avg_rating\":(.*?)\,\"avg_rating_recent' \
-                          r'.*?\"image_100x100\":\"(https://img-c.udemycdn.com/course.*?)\"' \
+                          r'.*?\"image_100x100\":\"(.*?)\"' \
                           r'.*?\"content_info\":\"([0-9.]*)'
                 extracted_data = re.findall(pattern, each)
+
                 # with open("./data/result/course.txt", "a+") as course_file:
                 course_file = open("./data/result/course.txt", "a+")
                 for line in extracted_data:
@@ -58,7 +59,7 @@ class Admin(User):
                     ordered_list = [data_list[i] for i in list_order]
                     for item in ordered_list:
                         course_file.write(item)
-                        if num < len(ordered_list):
+                        if num < len(item):
                             course_file.write(";;;")
                             num += 1
                     course_file.write("\n")
