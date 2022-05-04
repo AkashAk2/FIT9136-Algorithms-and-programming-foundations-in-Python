@@ -1,4 +1,5 @@
 import re
+import os
 from User import User
 
 
@@ -67,7 +68,18 @@ class Admin(User):
 
 
     def extract_review_info(self):
-        pass
+        folder_path = r"./data/review_data"
+        os.chdir(folder_path)
+        for file in os.listdir():
+            if file.endswith(".json"):
+                file_path = f"{folder_path}/{file}"
+                with open(file_path, 'r') as one_file:
+                    data = one_file.readlines()
+                    for each in data:
+                        pattern = r'\"_class\": \"course_review\", \"id\":.([0-9]*)\, \"content\":\ \"(.*?)\",' \
+                                r'.*? \"rating\": (.*?)\,'
+                        extracted_data = re.findall(pattern, one_file)
+                        print(extracted_data)
 
     def extract_students_info(self):
         pass
@@ -98,4 +110,4 @@ class Admin(User):
 
 admin1 = Admin()
 # admin1.register_admin('Admin3','AdminPass')
-admin1.extract_course_info()
+admin1.extract_review_info()
