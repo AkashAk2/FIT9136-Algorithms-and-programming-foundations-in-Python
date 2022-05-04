@@ -40,28 +40,43 @@ class Admin(User):
 
     def extract_course_info(self):
 
-        with open("./data/course_data/test.txt") as file_handle:
-            data = file_handle.read()
-            new_data = data.replace("\n", "").replace("\t", "")
-            pattern = r'\_class":"course"\,(.*?)\,"url".*?"visible_instructors":\[\{(.*?)\,"id".*?"tracking_id":' \
-                      r'.*?,(.*?)\,"caption_locales".*?,\{"_class":"locale".*?]\,(.*?)\,"avg_rating_recent"' \
-                      r'.*?"instructor_name":.*?\,(.*?)\,"content_info_short"'
-            extracted_class_course = re.findall(pattern, new_data)
-            second_pattern = r'\"id\":([0-9]*)\,.*?\"title\":\"(.*?)\".*?\"image_100x100\":\"(.*?)\"' \
-                             r'.*?\"headline\":\"(.*?)\".*?\"num_subscribers\":(.*?)\',.*?\"avg_rating\":(.*?)\',' \
-                             r'.*?\'\"content_info\":\"([0-9.]*)'
-            extracted_data = re.findall(second_pattern, ((str)(extracted_class_course)))
-            course_file = open("./data/course_data/course.txt", 'w')
-            print(extracted_data)
-            # for each in extracted_data:
-            #     num = 0
-            #     for line in each:
-            #         for item in line:
-            #             course_file.write(line)
-            #             if num < len(item):
-            #                 course_file.write(";;;")
-            #                 num += 1
-            #         course_file.write("\n")
+        with open("./data/course_data/raw_data.txt") as file_handle:
+            data = file_handle.readlines()
+            i = 0
+            for each in data:
+                # # new_data = data.replace("\n", "").replace("\t", "")
+                # pattern = r'\_class":"course"\,(.*?)\,"url".*?"visible_instructors":\[\{(.*?)\,"id".*?"tracking_id":' \
+                #         r'.*?,(.*?)\,"caption_locales".*?,\{"_class":"locale".*?]\,(.*?)\,"avg_rating_recent"' \
+                #         r'.*?"instructor_name":.*?\,(.*?)\,"content_info_short"'
+                # extracted_class_course = re.findall(pattern, each)
+                # second_pattern = r'\"id\":([0-9]*)\,.*?\"title\":\"(.*?)\".*?\"image_100x100\":\"(.*?)\"' \
+                #                 r'.*?\"headline\":\"(.*?)\".*?\"num_subscribers\":(.*?)\',.*?\"avg_rating\":(.*?)\',' \
+                #                 r'.*?\'\"content_info\":\"([0-9.]*)'
+                # extracted_data = re.findall(second_pattern, ((str)(extracted_class_course)))
+                pattern = r'\_class\":\"course\"\,\"id\":([0-9]*).*?\"title\":\"(.*?)\"' \
+                          r'.*?\"headline\":\"(.*?)\".*?\"num_subscribers.*?\":(.*?)\,\"caption_locales' \
+                          r'.*?\"avg_rating\":(.*?)\,\"avg_rating_recent' \
+                          r'.*?\"image_100x100\":\"(https://img-c.udemycdn.com/course.*?)\"' \
+                          r'.*?\"content_info\":\"([0-9.]*)'
+                extracted_data = re.findall(pattern, each)
+                # course_file = open("./data/course_data/course.txt", 'w')
+                i += 1
+                print(extracted_data)
+                print(i)
+                with open("./data/course_data/course.txt", "a+") as course_file:
+                    num = 0
+                    for line in extracted_data:
+                        data_list = list(line)
+                        list_order = [0,1,5,2,3,4,6]
+                        ordered_list = [data_list[i] for i in list_order]
+                        for each in ordered_list:
+                            course_file.write(each)
+                            if num < len(each):
+                                course_file.write(";;;")
+                                num += 1
+                        course_file.write("\n")
+
+
 
     def extract_review_info(self):
         pass
