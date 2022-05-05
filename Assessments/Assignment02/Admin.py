@@ -115,8 +115,11 @@ class Admin(User):
                         #     {
                         #         id_existing == True
                         #     }
+                        # all_pattern = r'\"_class\": \"course_review\", \"id\": (.*?)\,' \
+                        #               r'.*?\"_class\": \"user\", \"id\": (.*?)\,.*? \"title\": \"(.*?)\",' \
+                        #               r'.*?\"image_50x50\": \"(.*?)\",.*?\"initials\": \"(.*?)\"'
                         all_pattern = r'\"_class\": \"course_review\", \"id\": (.*?)\,' \
-                                      r'.*?\"_class\": \"user\", \"id\": (.*?)\,.*? \"title\": \"(.*?)\",' \
+                                      r'.*?\"_class\": \"user\",(.*?) \"title\": \"(.*?)\",' \
                                       r'.*?\"image_50x50\": \"(.*?)\",.*?\"initials\": \"(.*?)\"'
                         extracted_data = re.findall(all_pattern, each)
 
@@ -129,10 +132,17 @@ class Admin(User):
                                 user_name_extracted = str(ordered_list[1])
                                 stud_user_name = user_name_extracted.lower().replace(" ", "_")
                                 extracted_user_id = str(ordered_list[0])
+                                stud_id = ""
+                                for digit in extracted_user_id:
+                                    if digit.isdigit() == True:
+                                        stud_id += str(digit)
+                                if len(stud_id) == 0:
+                                    stud_id += str(User.generate_unique_user_id(self))
                                 extracted_user_title = str(ordered_list[3]).lower()
                                 stud_password = extracted_user_title + extracted_user_id + extracted_user_title
                                 encrypted_pass = User.encryption(self,stud_password)
                                 user_name_password = [stud_user_name, encrypted_pass]
+                                ordered_list[0] = stud_id
                                 final_list = [ordered_list[0], user_name_password[0], user_name_password[1],
                                               ordered_list[1], ordered_list[2], ordered_list[3], ordered_list[4]]
                                 # print(len(final_list))
