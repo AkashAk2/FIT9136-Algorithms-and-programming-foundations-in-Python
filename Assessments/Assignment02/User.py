@@ -41,7 +41,7 @@ class User:
           else:
               user_id_existing = True
           file_handle_student.close()
-       print(self.user_id)
+       # print(self.user_id)
        return self.user_id
 
     def encryption(self, input_password):

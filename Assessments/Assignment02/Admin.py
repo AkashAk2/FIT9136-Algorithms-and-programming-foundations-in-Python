@@ -105,19 +105,6 @@ class Admin(User):
                 with open(file_path, 'r') as f:
                     data = f.readlines()
                     for each in data:
-                        # id_pattern = r'\"_class\": \"user\", \"id\":.*?\,'
-                        # extracted_id = re.search(id_pattern, each)
-                        # if str(extracted_id) == "None":
-                        #     {
-                        #         id_existing == False
-                        #     }
-                        # else:
-                        #     {
-                        #         id_existing == True
-                        #     }
-                        # all_pattern = r'\"_class\": \"course_review\", \"id\": (.*?)\,' \
-                        #               r'.*?\"_class\": \"user\", \"id\": (.*?)\,.*? \"title\": \"(.*?)\",' \
-                        #               r'.*?\"image_50x50\": \"(.*?)\",.*?\"initials\": \"(.*?)\"'
                         all_pattern = r'\"_class\": \"course_review\", \"id\": (.*?)\,' \
                                       r'.*?\"_class\": \"user\",(.*?) \"title\": \"(.*?)\",' \
                                       r'.*?\"image_50x50\": \"(.*?)\",.*?\"initials\": \"(.*?)\"'
@@ -155,13 +142,80 @@ class Admin(User):
                                 student_file.write("\n")
 
     def extract_instructor_info(self):
-        pass
+        with open("./data/course_data/raw_data.txt") as file_handle:
+            data = file_handle.readlines()
+            i = 1
+            for line in data:
+                pattern = r'\"_class\":\"course\",\"id\":(.*?)\,.*?\"visible_instructors\":\[(.*?)\]'
+                extracted_data = re.findall(pattern, line)
+
+                for item in extracted_data:
+                    course_id = item[0]
+                    instructors_data = item[1]
+                    instructors_pattern = r'{(.*?)}'
+                    instructors_info = re.findall(instructors_pattern, instructors_data)
+                    # print(instructors_info)
+
+                    for instructor in instructors_info:
+                        instructor = '{' + instructor + '}'
+                        instructor = instructor.replace('":', '": ')
+                        instructor = eval(instructor)
+                        # print(course_id, instructor['id'], instructor['display_name'])
+                        instructor_id = str(instructor['id'])
+                        # print(instructor_id)
+                        display_name = instructor['display_name']
+                        job_title = instructor['job_title']
+                        image = instructor['image_100x100']
+                        username = display_name.replace(" ", "_").lower()
+                        password = User.encryption(self,str(instructor_id))
+                        result = instructor_id + ";;;" + username + ";;;" + password + ";;;" + display_name + ";;;" +\
+                            job_title + ";;;" + image + ";;;" + course_id
+                        # print(result[0])
+
+                        with open("./data/result/user_instructor.txt", "a+") as instructor_append:
+                            is_already_existing = False
+                            with open("./data/result/user_instructor.txt", "r+") as instructor_read:
+                                instructor_read_data = instructor_read.readlines()
+                                instructor_data_list = []
+                                for each in instructor_read_data:
+                                    instructor_temp_id = each.split(";;;")[0]
+                                    instructor_data_list.append(instructor_temp_id)
+
+                                if instructor_id in instructor_data_list:
+                                    is_already_existing = True
+                                    get_instructor_line = instructor_data_list.index(instructor_id)
+                                    single_instructor = instructor_read_data[get_instructor_line].strip("\n")
+                                    single_instructor += "--" + course_id + "\n"
+                                    instructor_read_data[get_instructor_line] = single_instructor
+                                    with open("./data/result/user_instructor.txt", "w+") as instructor_doc:
+                                        instructor_doc.writelines(instructor_read_data)
+
+                                if is_already_existing == False:
+                                    instructor_append.write(result)
+                                    instructor_append.write("\n")
+
 
     def extract_info(self):
-        pass
+        self.extract_course_info()
+        self.extract_instructor_info()
+        self.extract_students_info()
+        self.extract_review_info()
 
     def remove_data(self):
-        pass
+        with open("./data/result/course.txt", 'r+') as course_file:
+            course_file.seek(0)
+            course_file.truncate()
+            # course_file.write("")
+        with open("./data/result/review.txt", 'r+') as review_file:
+            review_file.seek(0)
+            review_file.truncate()
+        with open("./data/result/user_student.txt", 'r+') as students_file:
+            students_file.seek(0)
+            students_file.truncate()
+        with open("./data/result/user_instructor.txt", 'r+') as instructor_file:
+            instructor_file.seek(0)
+            instructor_file.truncate()
+
 
     def view_courses(self, args=[]):
         pass
@@ -173,11 +227,14 @@ class Admin(User):
         pass
 
     def __str__(self):
-        pass
+        User.__str__(self)
 
 
 
 
 admin1 = Admin()
 # admin1.register_admin('Admin3','AdminPass')
-admin1.extract_students_info()
+# admin1.extract_course_info()
+# admin1.extract_info()
+# admin1.extract_instructor_info()
+# admin1.__str__()
