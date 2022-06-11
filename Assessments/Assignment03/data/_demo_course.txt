@@ -1,0 +1,6 @@
+T-Software;;;159966861;;;Other IT & Software;;;null;;;null;;;925332302;;;SQL For Data Science With Google Big Query;;;/course/sql_for_data_science_with_google_big_query/;;;6433;;;4.489899;;;1426
+IT-Software;;;159966861;;;Other IT & Software;;;null;;;null;;;432052464;;;AWS Business Essentials - The Business Value of Amazon AWS;;;/course/aws_business_essentials_-_the_business_value_of_amazon_aws/;;;22291;;;4.5347595;;;1400
+IT-Software;;;159966861;;;Other IT & Software;;;null;;;null;;;211533115;;;Alteryx Essentials;;;/course/alteryx_essentials/;;;4019;;;4.360465;;;1398
+IT-Software;;;159966861;;;Other IT & Software;;;null;;;null;;;816361383;;;Graph Theory Algorithms;;;/course/graph_theory_algorithms/;;;33744;;;4.640351;;;1396
+IT-Software;;;159966861;;;Other IT & Software;;;null;;;null;;;878014390;;;Android Unit Testing and Test Driven Development;;;/course/android_unit_testing_and_test_driven_development/;;;7604;;;4.662393;;;1375
+IT-Software;;;159966861;;;Other IT & Software;;;null;;;null;;;580663447;;;SQL Advanced;;;/course/sql_advanced/;;;9873;;;4.233333;;;1374
