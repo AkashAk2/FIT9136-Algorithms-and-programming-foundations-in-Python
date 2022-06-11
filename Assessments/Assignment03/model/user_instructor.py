@@ -129,12 +129,18 @@ class Instructor:
                 ten_instructors = df.nlargest(10, 'Number_of_Courses')
                 ten_instructors.plot(kind= "bar", figsize = (15, 15), x = "Instructor_Name", y = "Number_of_Courses")
                 plt.ylim(0, ten_instructors["Number_of_Courses"].iloc[0]+5)
+                plt.title("Bar chart for top 10 instructors teaching most courses.", fontweight = "bold", fontsize=22)
                 plt.xlabel("Instructor Names", fontweight = "bold", fontsize=20)
                 plt.ylabel("Number of Courses", fontweight = "bold", fontsize=20)
                 # Annotate values of the grid
                 for i, data in enumerate(ten_instructors['Number_of_Courses'].tolist()):
                     plt.text(i, data + 0.5, str(data), horizontalalignment = "center")
                 plt.savefig("static/img/instructor_figure1.png", dpi = 300, format = "png")
+                top_instructor = instructor_data[ten_instructors.iloc[0].name]
+                top_instructor_courses = len((top_instructor.split(";;;")[-1]).split("--"))
+                result = "The instructor named " + top_instructor.split(";;;")[6] +\
+                         " teaches the most number of courses which is " + str(top_instructor_courses) + "."
+                return result
 
         except:
             print("Something went wrong while generating instructor figure!")

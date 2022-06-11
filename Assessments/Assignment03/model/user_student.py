@@ -17,7 +17,7 @@ class Student:
 
     def get_students_by_page(self, page):
         try:
-            with open("./data/user.txt", "r+") as user_file:
+            with open("./data/user.txt", "r+", encoding="utf-8") as user_file:
                 user_data = user_file.readlines()
                 student_data = []
                 for item in user_data:
@@ -47,7 +47,7 @@ class Student:
 
     def get_student_by_id(self, id):
         try:
-            with open("./data/user.txt", "r+") as user_file:
+            with open("./data/user.txt", "r+", encoding="utf-8") as user_file:
                 user_data = user_file.readlines()
                 student_data = []
                 for item in user_data:
@@ -70,7 +70,7 @@ class Student:
     def delete_student_by_id(self, id):
         try:
             is_deleted = False
-            with open("./data/user.txt", "r+") as user_file:
+            with open("./data/user.txt", "r+", encoding="utf-8") as user_file:
                 user_data = user_file.readlines()
                 student_data = []
                 for item in user_data:
