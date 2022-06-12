@@ -282,7 +282,7 @@ class Course:
                 df.plot(kind="bar", figsize=(15, 15), x="subcategory_id", y="total_subscribers")
                 plt.ylim(0, df["total_subscribers"].iloc[0] + 500000)
                 plt.title("Bar chart for top 10 course subcategories with most subscribers.", fontweight="bold",
-                          fontsize=22)
+                          fontsize=22, y= 1.02)
                 plt.xlabel("Subcategory_ID", fontweight="bold", fontsize=20)
                 plt.ylabel("Total_Subscribers", fontweight="bold", fontsize=20)
                 # Annotate values of the grid
@@ -316,7 +316,8 @@ class Course:
                 ten_courses = df.nsmallest(10, 'avg_rating')
                 ten_courses.plot(kind="bar", figsize=(15, 15), x="course_name", y="avg_rating")
                 plt.ylim(0, ten_courses["avg_rating"].iloc[0] + 5)
-                plt.title("Bar chart for top 10 courses with lowest avg review.", fontweight = "bold", fontsize=22)
+                plt.title("Bar chart for top 10 courses with lowest avg review.", fontweight = "bold", fontsize=22,
+                          y= 1.02)
                 plt.xlabel("Course Names", fontweight="bold", fontsize=20)
                 plt.ylabel("Average Rating", fontweight="bold", fontsize=20)
                 # Annotate values of the grid
@@ -333,16 +334,157 @@ class Course:
 
 
     def generate_course_figure3(self):
-        pass
+        try:
+            with open("./data/course.txt", "r+", encoding="utf-8") as course_file:
+                course_data = course_file.readlines()
+                avg_rating_list = []
+                subscribers_list = []
+                for each in course_data:
+                    temp_subscribers = int(each.split(";;;")[-3])
+                    if 10000 < temp_subscribers < 100000:
+                        subscribers_list.append(temp_subscribers)
+                        avg_rating_list.append(float((each.split(";;;")[-2])[:5]))
+
+                plt.figure(figsize= (15,15))
+                plt.scatter(avg_rating_list, subscribers_list, s= 100)
+                plt.xlabel("Average course ratings", fontweight = 'bold', fontsize = 20)
+                plt.ylabel("Number of Subscribers", fontweight = 'bold', fontsize = 20)
+                plt.title("Scatter chart to show all the course avg rating distribution and num of subscribers",
+                          fontweight = "bold", fontsize = 22, y= 1.02)
+                plt.savefig("static/img/course_figure3.png", dpi=300, format="png")
+                return "This scatter plot shows the negatively skewed distribution between course avg " \
+                       "rating and number of subscribers"
+
+        except:
+            print("Something went wrong while generating course figure 3")
+
+
 
     def generate_course_figure4(self):
-        pass
+        try:
+            with open("./data/course.txt", "r+", encoding="utf-8") as course_file:
+                course_data = course_file.readlines()
+                category_title = []
+                course_count = []
+                for each in course_data:
+                    category_title.append(each.split(";;;")[0])
+                category_title = list(dict.fromkeys(category_title))
+                for item in category_title:
+                    temp_list = []
+                    for each_item in course_data:
+                        temp_title = each_item.split(";;;")[0]
+                        if item == temp_title:
+                            temp_list.append(each_item.split(";;;")[5])
+                    course_count.append(temp_list)
+                for each_course in course_count:
+                    temp = each_course
+                    ind = course_count.index(each_course)
+                    course_count[ind] = len(temp)
+                df = pd.DataFrame({'category_title': category_title, 'no_of_courses': course_count})
+                sorted_df = df.sort_values(by= 'no_of_courses')
+                explode_list = []
+                for i in range(len(course_count)):
+                    if i == 39:
+                        explode_list.append(0.5)
+                    else:
+                        explode_list.append(0)
+                explode_num = tuple(explode_list)
+                plt.figure(figsize=(22,22))
+                plt.pie(sorted_df['no_of_courses'], labels= sorted_df['category_title'], explode= explode_num,
+                        shadow= True, autopct='%1.1f%%')
+                plt.axis('equal')
+                plt.title("Pie chart to show the number of courses for all categories,"
+                          " the second largest number of course is exploded",
+                          fontweight="bold", fontsize=22, y=1.02)
+                plt.xlabel("Total categories are " + str(len(category_title)) + " and total courses are " +\
+                       str(len(course_data)), fontweight="bold", fontsize=18)
+                plt.savefig("static/img/course_figure4.png", dpi=300, format="png")
+
+                return "Total categories are " + str(len(category_title)) + " and total courses are " +\
+                       str(len(course_data)) + ". The category with second largest number of courses is " +\
+                       str(sorted_df['category_title'].iloc[39]) + " which has " + \
+                       str(sorted_df['no_of_courses'].iloc[39]) + " courses."
+
+        except:
+            print("Something went wrong while generating course figure 4.")
+
 
     def generate_course_figure5(self):
-        pass
+        try:
+            with open("./data/course.txt", "r+", encoding="utf-8") as course_file:
+                course_data = course_file.readlines()
+                course_with_reviews = []
+                for each in course_data:
+                    if int(each.split(";;;")[-1]) != 0:
+                        course_with_reviews.append(each)
+                course_details = [len(course_with_reviews), len(course_data) - len(course_with_reviews)]
+                print(course_details)
+                titles = ["course_with_reviews", "course_without_reviews"]
+                fig = plt.figure(figsize= (15, 15))
+                plt.bar(titles, course_details)
+                plt.xlabel("Courses", fontweight="bold", fontsize=20)
+                plt.ylabel("Number of courses", fontweight="bold", fontsize=20)
+                plt.title("Bar chart for courses with reviews and courses without reviews.", fontweight="bold",
+                          fontsize=22, y=1.02)
+                for i, data in enumerate(course_details):
+                    plt.text(i, data + 100, str(data), horizontalalignment="center", fontsize = 12)
+                plt.savefig("static/img/course_figure5.png", dpi=300, format="png")
+                return "Total number of courses are " + str(len(course_data)) + ". Courses with reviews are " +\
+                       str(course_details[0]) + " and courses without reviews are " + str(course_details[1]) + "."
+        except:
+            return "Something went wrong while generating course figure 5. Please check for course data files."
 
     def generate_course_figure6(self):
-        pass
+        try:
+            with open("./data/course.txt", "r+", encoding="utf-8") as course_file:
+                course_data = course_file.readlines()
+                subcategory_ids_list = []
+                subscribers_count_list = []
+                for each in course_data:
+                    sub_id = int(each.split(";;;")[1])
+                    subcategory_ids_list.append(sub_id)
+                subcategory_ids_list = list(dict.fromkeys(subcategory_ids_list))
+                for item in subcategory_ids_list:
+                    total_subscribers = 0
+                    for each_id in course_data:
+                        temp_sub_id = int(each_id.split(";;;")[1])
+                        if item == temp_sub_id:
+                            total_subscribers += int(each_id.split(";;;")[-3])
+
+                    subscribers_count_list.append(total_subscribers)
+                df = pd.DataFrame({"total_subscribers": subscribers_count_list,
+                                   "subcategory_id": subcategory_ids_list})
+                ten_courses = df.nsmallest(10, "total_subscribers")
+                print(ten_courses)
+                subscribers_count_list = ten_courses["total_subscribers"]
+                subcategory_ids_list = ten_courses['subcategory_id']
+                temp_list = []
+                for sub_id in subcategory_ids_list:
+                    for each in course_data:
+                        temp_id = int(each.split(";;;")[1])
+                        if int(sub_id) == temp_id:
+                            id_name = str(sub_id) + "_" + ((each.split(";;;")[2])[:3])
+                            temp_list.append(id_name)
+
+                sub_name_list = list(dict.fromkeys(temp_list))
+                df = pd.DataFrame({"total_subscribers": subscribers_count_list,
+                                   "subcategory_id": sub_name_list})
+                df.plot(kind="bar", figsize=(15, 15), x="subcategory_id", y="total_subscribers")
+                plt.ylim(0, df["total_subscribers"].iloc[0] + 100)
+                plt.title("Bar chart for top 10 course subcategories with least subscribers.", fontweight="bold",
+                          fontsize=22, y=1.02)
+                plt.xlabel("Subcategory_ID", fontweight="bold", fontsize=20)
+                plt.ylabel("Total_Subscribers", fontweight="bold", fontsize=20)
+                # Annotate values of the grid
+                for i, data in enumerate(df['total_subscribers'].tolist()):
+                    plt.text(i, data + 1, str(data), horizontalalignment="center")
+                plt.savefig("static/img/course_figure6.png", dpi=300, format="png")
+                result = "The subcategory with id " + (sub_name_list[0])[:-4] + \
+                         " has the least number of subscribers among others."
+                return result
+
+        except:
+            print("Something went wrong while generating course_figure6")
 
 course = Course()
 # course.clear_course_data()
@@ -352,4 +494,4 @@ course = Course()
 # course.delete_course_by_id(772137256)
 # course.get_course_by_course_id(872028607)
 # course.get_course_by_instructor_id(612742716)
-course.generate_course_figure2()
+# course.generate_course_figure6()
