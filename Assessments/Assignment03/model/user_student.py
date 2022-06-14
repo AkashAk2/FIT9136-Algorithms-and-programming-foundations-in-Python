@@ -1,4 +1,4 @@
-from user import User
+from model.user import User
 
 
 class Student:
@@ -43,7 +43,7 @@ class Student:
                 return result
 
         except:
-            print("No student record found!")
+            return "No student record found!"
 
     def get_student_by_id(self, id):
         try:
@@ -64,7 +64,7 @@ class Student:
                                                 student_split_list[4], student_split_list[5])
                         return student_obj
         except:
-            print("No student data found!")
+            return "No student data found!"
 
 
     def delete_student_by_id(self, id):
@@ -91,7 +91,7 @@ class Student:
             return is_deleted
 
         except:
-            print("No student record found!")
+            return "No student record found!"
 
 
 

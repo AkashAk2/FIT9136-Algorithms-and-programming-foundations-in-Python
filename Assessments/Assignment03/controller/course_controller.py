@@ -16,24 +16,38 @@ model_user = User()
 
 
 
-
+@course_page.route("/reset-database", methods=["POST"])
 def reset_database():
-    pass
+    try:
+        with open("./data/user.txt", "w") as user_text:
+            user_text.seek(0)
+            user_text.truncate()
+        with open("./data/course.txt", "w") as course_text:
+            course_text.seek(0)
+            course_text.truncate()
+        return render_result("Database successfully cleared!")
+    except:
+        return render_err_result("Something went wrong while resetting database! Operation failed!")
 
 
-
+@course_page.route("/course-list", methods=["GET"])
 def course_list():
     context = {}
-    if # check login user
+    if User.current_login_user is not None:
         req = request.values
         page = req['page'] if "page" in req else 1
 
         # get values for one_page_course_list, total_pages, total_num
-
+        result = model_course.get_courses_by_page(page)
         # check one_page_course_list, make sure this variable not be None, if None, assign it to []
-
+        if result[0] is None:
+            one_page_course_list = []
+        else:
+            one_page_course_list = result[0]
+        total_pages = result[1]
+        total_num = result[2]
         # get values for page_num_list
-
+        page_num_list = model_course.generate_page_num_list(page, total_pages)
 
         context['one_page_course_list'] = one_page_course_list
         context['total_pages'] = total_pages
@@ -42,6 +56,7 @@ def course_list():
         context['total_num'] = total_num
 
         # add "current_user_role" to context
+        context["current_user_role"] = User.current_login_user.role
 
     else:
         return redirect(url_for("index_page.index"))

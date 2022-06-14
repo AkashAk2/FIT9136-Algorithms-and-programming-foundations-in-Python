@@ -64,7 +64,7 @@ class Course:
                                 course_file.write(self.__str__())
                                 course_file.write("\n")
         except:
-            print("Something went wrong while extracting course information!")
+            return "Something went wrong while extracting course information!"
 
 
 
@@ -74,7 +74,7 @@ class Course:
                 course_file.seek(0)
                 course_file.truncate()
         except:
-            print("Something went wrong couldn't clear course data")
+            return "Something went wrong couldn't clear course data"
 
     def generate_page_num_list(self, page, total_pages):
         try:
@@ -103,7 +103,7 @@ class Course:
             return page_number_list
 
         except:
-            print("Something went wrong while generating page numbers!")
+            return "Something went wrong while generating page numbers!"
 
 
 
@@ -126,7 +126,7 @@ class Course:
                     course_list.append(course_obj)
                 return (course_list, total_pages, num_of_courses)
         except:
-            print("Something went wrong while getting course details by page!")
+            return "Something went wrong while getting course details by page!"
 
 
 
@@ -173,7 +173,7 @@ class Course:
             return is_deleted
 
         except:
-            print("Something went wrong while deleting course by id!")
+            return "Something went wrong while deleting course by id!"
 
 
     def get_course_by_course_id(self, temp_course_id):
@@ -210,7 +210,7 @@ class Course:
                     return (comment)
 
         except:
-            print("Something went wrong while getting course by course id!")
+            return "Something went wrong while getting course by course id!"
 
 
     def get_course_by_instructor_id(self, instructor_id):
@@ -242,7 +242,7 @@ class Course:
                     return (course_list, len(course_list))
 
         except:
-            print("Something went wrong while getting course details by instructor id!")
+            return "Something went wrong while getting course details by instructor id!"
 
 
     def generate_course_figure1(self):
@@ -294,7 +294,7 @@ class Course:
                 return result
 
         except:
-            print("Something went wrong while generating course_figure1")
+            return "Something went wrong while generating course_figure1"
 
 
     def generate_course_figure2(self):
@@ -330,7 +330,7 @@ class Course:
                 return result
 
         except:
-            print("Something went wrong while generating course figure 2")
+            return "Something went wrong while generating course figure 2"
 
 
     def generate_course_figure3(self):
@@ -356,7 +356,7 @@ class Course:
                        "rating and number of subscribers"
 
         except:
-            print("Something went wrong while generating course figure 3")
+            return "Something went wrong while generating course figure 3"
 
 
 
@@ -406,7 +406,7 @@ class Course:
                        str(sorted_df['no_of_courses'].iloc[39]) + " courses."
 
         except:
-            print("Something went wrong while generating course figure 4.")
+            return "Something went wrong while generating course figure 4."
 
 
     def generate_course_figure5(self):
@@ -484,7 +484,7 @@ class Course:
                 return result
 
         except:
-            print("Something went wrong while generating course_figure6")
+            return "Something went wrong while generating course_figure6"
 
 course = Course()
 # course.clear_course_data()

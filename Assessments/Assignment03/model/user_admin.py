@@ -1,4 +1,4 @@
-from user import User
+from model.user import User
 
 class Admin:
 
@@ -11,20 +11,17 @@ class Admin:
 
     def register_admin(self):
         try:
-            self.username = "admin"
-            self.password = User.encrypt_password(self,"admin")
+            temp_password = self.password
+            self.password = User.encrypt_password(self,temp_password)
             self.uid = User.generate_unique_user_id(self)
             with open("./data/user.txt", "a+", encoding="utf-8") as user_text:
                 user_text.write(self.__str__())
                 user_text.write("\n")
         except:
-            print("Something went wrong while registering admin!")
+            return "Something went wrong while registering admin!"
 
 
 
     def __str__(self):
         return str(self.uid) + ";;;" + self.username + ";;;" + self.password + ";;;" + self.register_time \
                + ";;;" + self.role
-
-admin = Admin()
-admin.register_admin()

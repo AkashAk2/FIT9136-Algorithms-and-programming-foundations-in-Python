@@ -14,44 +14,53 @@ model_instructor = Instructor()
 model_course = Course()
 
 
-
+@instructor_page.route("/instructor-list", methods=["GET"])
 def instructor_list():
-    if # check login user
+    if User.current_login_user is not None:
         req = request.values
         page = req['page'] if "page" in req else 1
         context = {}
         # get values for one_page_instructor_list, total_pages, total_num
-
+        instructor_list = model_instructor.get_instructors_by_page(page)
+        one_page_instructor_list = instructor_list[0]
+        total_pages = instructor_list[1]
+        total_num = instructor_list[2]
         # get values for page_num_list
-
+        page_num_list = model_course.generate_page_num_list(page=page, total_pages=total_pages)
         # check one_page_instructor_list, make sure this variable not be None, if None, assign it to []
-
-
-        context['one_page_instructor_list'] = one_page_instructor_list
+        if one_page_instructor_list is None:
+            context['one_page_instructor_list'] = []
+        else:
+            context['one_page_instructor_list'] = one_page_instructor_list
         context['total_pages'] = total_pages
         context['page_num_list'] = page_num_list
         context['current_page'] = int(page)
         context['total_num'] = total_num
         # add "current_user_role" to context
-
+        context["current_user_role"] = User.current_login_user.role
     else:
         return redirect(url_for("index_page.index"))
 
     return render_template("07instructor_list.html", **context)
 
-
+@instructor_page.route("/teach-courses", methods=["GET"])
 def teach_courses():
     context = {}
 
-    if # check login user
+    if User.current_login_user is not None:
         # get instructor id
-
+        instructor_id = int(User.current_login_user.uid)
         # get values for course_list, total_num
-
-
+        search_result = model_course.get_course_by_instructor_id(instructor_id)
+        if search_result[0] is None:
+            course_list = []
+        else:
+            course_list = search_result[0]
+        total_num = search_result[1]
         context['course_list'] = course_list
         context['total_num'] = total_num
         # add "current_user_role" to context
+        context["current_user_role"] = User.current_login_user.role
 
     else:
         return redirect(url_for("index_page.index"))

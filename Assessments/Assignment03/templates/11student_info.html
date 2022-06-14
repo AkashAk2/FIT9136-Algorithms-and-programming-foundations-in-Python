@@ -14,7 +14,17 @@ Student Info
 {% block content%}
 <div class="container">
     <!-- student code start -->
-
+    <h1>Student Info</h1>
+    <br/>
+    <br/>
+    <p>Id: {{ user.uid }}</p>
+    <br/>
+    <p>Username: {{ user.username }}</p>
+    <br/>
+    <p>Password: {{ user.password }}</p>
+    <br/>
+    <p>Email: {{ user.email }}</p>
+    <br/>
     <!-- student code end -->
 </div>
 {% endblock%}

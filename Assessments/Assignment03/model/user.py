@@ -26,14 +26,14 @@ class User:
             print(is_username_valid)
             return is_username_valid
         except:
-            print("Something went wrong while validating username")
+            return "Something went wrong while validating username"
 
     # Validating the password
     def validate_password(self, password):
         try:
             # Boolean value
             is_valid_password = False
-            # if the password length is greater than or equal to 8 returning true
+            # if the password length is greater than or equal to 5 returning true
             if len(password) >= 5:
                 is_valid_password = True
             # else returning false
@@ -42,7 +42,7 @@ class User:
             print(is_valid_password)
             return is_valid_password
         except:
-            print("Something went wrong while validating password")
+            return "Something went wrong while validating password"
 
     # validating email
     def validate_email(self, email):
@@ -56,7 +56,7 @@ class User:
             print(is_valid_email)
             return is_valid_email
         except:
-            print("Something went wrong while validating email")
+            return "Something went wrong while validating email"
 
     def clear_user_data(self):
         try:
@@ -64,25 +64,26 @@ class User:
                 user_file.seek(0)
                 user_file.truncate()
         except:
-            print("Something went wrong while clearing user data!")
+            return "Something went wrong while clearing user data!"
 
     def authenticate_user(self, username, password):
         try:
             with open("./data/user.txt", "r+", encoding="utf-8") as file_handle_user:
                 user_data = file_handle_user.readlines()
                 is_authenticated = False
+                encrypted_pass = self.encrypt_password(password)
                 user_info_string = ""
                 for each in user_data:
-                    text_username = each.split(";;;")[1]
-                    text_password = each.split(";;;")[2]
-                    if username == text_username and password == text_password:
+                    text_username = each.strip().split(";;;")[1]
+                    text_password = each.strip().split(";;;")[2]
+                    if text_username == username and text_password == encrypted_pass:
                         is_authenticated = True
-                        user_info_string += each
-                        return is_authenticated, user_info_string
-                    else:
-                        return is_authenticated, user_info_string
+                        user_info_string += each.strip("\n")
+                result = (is_authenticated, user_info_string)
+                return result
+
         except:
-            print("Something went wrong while authenticating user!")
+            return "Something went wrong while authenticating user!"
 
     def check_username_exist(self, username):
         try:
@@ -93,11 +94,12 @@ class User:
                     text_username = each.split(";;;")[1]
                     if username == text_username:
                         is_username_exist = True
-                        return True
-                    else:
-                        return False
+                if is_username_exist == True:
+                    return True
+                else:
+                    return False
         except:
-            print("Something went wrong while checking username!")
+            return "Something went wrong while checking username!"
 
     def generate_unique_user_id(self):
         try:
@@ -133,7 +135,7 @@ class User:
             if user_id_existing == False:
                 return str_user_id
         except:
-            print("Something went wrong while generating a new user id!")
+            return "Something went wrong while generating a new user id!"
 
     def encrypt_password(self, password):
         # defining the all_punctuation variable from the task's decription
@@ -176,7 +178,7 @@ class User:
         try:
             is_registered = False
             is_username_existing = self.check_username_exist(username)
-            if not is_username_existing:
+            if is_username_existing == False:
                 temp_user_id = self.generate_unique_user_id()
                 time = self.date_conversion(register_time)
                 temp_password = self.encrypt_password(password)
@@ -185,12 +187,14 @@ class User:
                 with open("./data/user.txt", "a+", encoding="utf-8") as file_handle_user:
                     file_handle_user.write(write_format)
                     file_handle_user.write("\n")
-                is_registered = True
+                    is_registered = True
 
             return is_registered
         except:
-            print("Something went wrong while registering user!")
+            return "Something went wrong while registering user!"
 
+    # Convert Unix timestamp to DD/MM/YYYY HH:MM:SS format - GeeksforGeeks. (2022).
+    # Retrieved 10 June 2022, from https://www.geeksforgeeks.org/convert-unix-timestamp-to-dd-mm-yyyy-hhmmss-format/
     def date_conversion(self, register_time):
         converted_time = ""
         given_time = 0
@@ -279,10 +283,10 @@ class User:
         return converted_time
 
 
-user_a = User()
+# user_a = User()
 # user_a.validate_username("dasfdsaf_ddsfa___da")
 # user_a.validate_password("as2")
 # user_a.validate_email("d@a.com")
 # user_a.generate_unique_user_id()
-# user_a.authenticate_user("Akash", "adsfsdf")
+# user_a.authenticate_user("akash", "akash")
 # user_a.date_conversion(1637549590753)

@@ -1,4 +1,4 @@
-from user import User
+from model.user import User
 import os
 import json
 import pandas as pd
@@ -71,7 +71,7 @@ class Instructor:
                     user_file_write.write(line)
                     user_file_write.write("\n")
         except:
-            print("Something went wrong while reading instructors data!")
+            return "Something went wrong while reading instructors data!"
 
 
 
@@ -102,12 +102,9 @@ class Instructor:
                                             [instructor_split_list[8]])
                     instructor_list.append(instructor_obj)
                 result = (instructor_list, total_pages, total_instructors)
-                print(result)
-                print(total_instructors)
-                print(total_pages)
                 return result
         except:
-            print("No Instructor records found!")
+            return "No Instructor records found!"
 
     def generate_instructor_figure1(self):
         try:
@@ -143,7 +140,7 @@ class Instructor:
                 return result
 
         except:
-            print("Something went wrong while generating instructor figure!")
+            return "Something went wrong while generating instructor figure!"
 
 
 
@@ -151,4 +148,4 @@ class Instructor:
 instructor = Instructor()
 # instructor.get_instructors()
 # instructor.get_instructors_by_page(1)
-instructor.generate_instructor_figure1()
+# instructor.generate_instructor_figure1()
