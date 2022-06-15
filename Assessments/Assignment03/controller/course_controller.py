@@ -15,16 +15,19 @@ model_instructor = Instructor()
 model_user = User()
 
 
-
+# This method will reset the database after clicking the button
 @course_page.route("/reset-database", methods=["POST"])
 def reset_database():
     try:
+        # opening the user file to delete data
         with open("./data/user.txt", "w") as user_text:
             user_text.seek(0)
-            user_text.truncate()
+            user_text.truncate() # deleted
+        # opening the course file to delete the data
         with open("./data/course.txt", "w") as course_text:
             course_text.seek(0)
-            course_text.truncate()
+            course_text.truncate() # deleted
+        # returns message
         return render_result("Database successfully cleared!")
     except:
         return render_err_result("Something went wrong while resetting database! Operation failed!")

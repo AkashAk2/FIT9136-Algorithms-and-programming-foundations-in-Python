@@ -13,12 +13,12 @@ instructor_page = Blueprint("instructor_page", __name__)
 model_instructor = Instructor()
 model_course = Course()
 
-
+# this method retrieves the instructor data
 @instructor_page.route("/instructor-list", methods=["GET"])
 def instructor_list():
     if User.current_login_user is not None:
         req = request.values
-        page = int(req['page']) if "page" in req else 1
+        page = int(req['page']) if "page" in req else 1 # getting page from request.values else default to 1.
         context = {}
         # get values for one_page_instructor_list, total_pages, total_num
         instructor_list = model_instructor.get_instructors_by_page(page)
@@ -44,6 +44,7 @@ def instructor_list():
 
     return render_template("07instructor_list.html", **context)
 
+# this method retrieves instructor teaching courses
 @instructor_page.route("/teach-courses", methods=["GET"])
 def teach_courses():
     context = {}
@@ -51,11 +52,11 @@ def teach_courses():
     if User.current_login_user is not None:
         # get instructor id
         req = request.values
-        instructor_id = int(req['id']) if 'id' in req else User.current_login_user.uid
+        instructor_id = int(req['id']) if 'id' in req else User.current_login_user.uid # getting user id
         # get values for course_list, total_num
-        search_result = model_course.get_course_by_instructor_id(instructor_id)
+        search_result = model_course.get_course_by_instructor_id(instructor_id) # getting course data
         if search_result[0] is None:
-            course_list = []
+            course_list = [] # setting [] if the result is None.
         else:
             course_list = search_result[0]
         total_num = search_result[1]

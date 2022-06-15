@@ -12,10 +12,8 @@ def index():
     # check the class variable User.current_login_user
     context = {}
     current_login_user = User.current_login_user
-    print("Current login:" + str(current_login_user))
     if current_login_user is not None:
         context["current_user_role"] = current_login_user.role
-    print("Current login:" + str(current_login_user))
     # manually register an admin account when open index page
     model_admin = Admin(username="admin", password="admin")
     model_admin.register_admin()

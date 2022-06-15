@@ -1,11 +1,17 @@
+#Name: AKash Balakrishnan
+#Student ID: 32192886
+#Description: This class is the parent class to Admin, Instructor, and Student classes.
+
 import re
 import random
 
 
 class User:
 
+    # Variable to store the current login user object
     current_login_user = None
 
+    # Constructor
     def __init__(self, uid=-1, username="", password="", register_time="yyyy-MM-dd_HH:mm:ss.SSS", role=""):
         self.uid = uid
         self.username = username
@@ -13,6 +19,7 @@ class User:
         self.register_time = register_time
         self.role = role
 
+    # String return method
     def __str__(self):
         return str(self.uid) + ";;;" + self.username + ";;;" + self.password + ";;;" + \
                self.register_time + ";;;" + self.role
@@ -23,7 +30,7 @@ class User:
             # Regex pattern returns true only if the values are between A-Z, a-z and _ else return false
             username_pattern = "^[A-Za-z_]*$"
             is_username_valid = bool(re.match(username_pattern, username))
-            print(is_username_valid)
+            # returning the boolean value
             return is_username_valid
         except:
             return "Something went wrong while validating username"
@@ -39,7 +46,7 @@ class User:
             # else returning false
             else:
                 is_valid_password = False
-            print(is_valid_password)
+            # returning the boolean value
             return is_valid_password
         except:
             return "Something went wrong while validating password"
@@ -47,60 +54,71 @@ class User:
     # validating email
     def validate_email(self, email):
         try:
+            # validating the email using regex
             email_pattern = "^[A-Za-z0-9.-_]+[@]+[A-Za-z0-9-]+.com{1,3}$"
             is_valid_email = False
             if (bool(re.match(email_pattern, email)) == True) and len(email) > 8:
                 is_valid_email = True
             else:
                 is_valid_email = False
-            print(is_valid_email)
+            # returning the boolean value
             return is_valid_email
         except:
             return "Something went wrong while validating email"
 
+    # Deleting all data in user.text file
     def clear_user_data(self):
         try:
+            # opening the file to delete
             with open("./data/user.txt", "r+", encoding="utf-8") as user_file:
                 user_file.seek(0)
-                user_file.truncate()
+                user_file.truncate() # deleted
         except:
             return "Something went wrong while clearing user data!"
 
+    #This method checks whether username and password can be matched with users saved in user.txt data file.
+    # returns boolean and string
     def authenticate_user(self, username, password):
         try:
+            # opening the user.text file to read
             with open("./data/user.txt", "r+", encoding="utf-8") as file_handle_user:
-                user_data = file_handle_user.readlines()
+                user_data = file_handle_user.readlines() # storing the lines to a list
                 is_authenticated = False
-                encrypted_pass = self.encrypt_password(password)
-                user_info_string = ""
+                encrypted_pass = self.encrypt_password(password) # encrypting entered password to authenticate
+                user_info_string = "" # empty string to store the user data
                 for each in user_data:
                     text_username = each.strip().split(";;;")[1]
                     text_password = each.strip().split(";;;")[2]
-                    if text_username == username and text_password == encrypted_pass:
+                    if text_username == username and text_password == encrypted_pass: # matching the values
                         is_authenticated = True
                         user_info_string += each.strip("\n")
                 result = (is_authenticated, user_info_string)
+
+                # returing the authentication result as boolean and user information as a string
                 return result
 
         except:
             return "Something went wrong while authenticating user!"
 
+    # This method checks whether the username is already existing in the user.text file
     def check_username_exist(self, username):
         try:
+            # reading the user.text file
             with open("./data/user.txt", "r+", encoding="utf-8") as file_handle_user:
                 user_data = file_handle_user.readlines()
                 is_username_exist = False
-                for each in user_data:
+                for each in user_data: # iterating through each line
                     text_username = each.split(";;;")[1]
-                    if username == text_username:
+                    if username == text_username: # matching the values
                         is_username_exist = True
-                if is_username_exist == True:
+                if is_username_exist == True: # if matched returns true else false
                     return True
                 else:
                     return False
         except:
             return "Something went wrong while checking username!"
 
+    # This method is generating and returning a 6 digit unique user id which is not in the user.txt file.
     def generate_unique_user_id(self):
         try:
             # creating an empty string to store the generated user id.
@@ -174,31 +192,36 @@ class User:
         # returning the encrypted string
         return encrypted
 
+    # This method registers (writing) the given user information to the user.text file
     def register_user(self, username, password, email, register_time, role):
         try:
             is_registered = False
+            # checking if the username is already existing or not
             is_username_existing = self.check_username_exist(username)
-            if is_username_existing == False:
-                temp_user_id = self.generate_unique_user_id()
-                time = self.date_conversion(register_time)
-                temp_password = self.encrypt_password(password)
+            if is_username_existing == False: # if not existing
+                temp_user_id = self.generate_unique_user_id() # generating id by calling the generate_unique_user_id()
+                time = self.date_conversion(register_time) # converting the unix time to human readable format
+                temp_password = self.encrypt_password(password) # encrypting the password
                 write_format = str(temp_user_id) + ";;;" + username + ";;;" + temp_password + ";;;" + str(time) + ";;;" + \
-                           role + ";;;" + email
+                           role + ";;;" + email # creating a string to write
                 with open("./data/user.txt", "a+", encoding="utf-8") as file_handle_user:
-                    file_handle_user.write(write_format)
+                    file_handle_user.write(write_format) # writing the user details to the text
                     file_handle_user.write("\n")
                     is_registered = True
-
+            # returning boolean
             return is_registered
         except:
             return "Something went wrong while registering user!"
 
+    # Reference:
     # Convert Unix timestamp to DD/MM/YYYY HH:MM:SS format - GeeksforGeeks. (2022).
     # Retrieved 10 June 2022, from https://www.geeksforgeeks.org/convert-unix-timestamp-to-dd-mm-yyyy-hhmmss-format/
     def date_conversion(self, register_time):
         converted_time = ""
         given_time = 0
         milli_seconds = 0
+
+        # splitting the last 3 digits of the unix time and saving it as milliseconds
         print(len(str(register_time)))
         if len(str(register_time)) > 10:
             given_time = int(str(register_time)[0:10])
@@ -234,13 +257,11 @@ class User:
         # Calculating date and month
         month = 0
         index = 0
-
         if flag == 1:
             while True:
                 if index == 1:
                     if extra_days - 29 < 0:
                         break
-
                     month += 1
                     extra_days -= 29
                 else:
@@ -248,19 +269,16 @@ class User:
                         break
                     month += 1
                     extra_days -= num_of_days[index]
-
                 index += 1
-
         else:
             while True:
                 if extra_days - num_of_days[index] < 0:
                     break
-
                 month += 1
                 extra_days -= num_of_days[index]
                 index += 1
 
-        # Present month
+        # Calculating current month
         if extra_days > 0:
             month += 1
             date = extra_days
@@ -275,18 +293,11 @@ class User:
         minutes = (extra_time % 3600) // 60
         seconds = (extra_time % 3600) % 60
 
-        # result format
+        # result format string
         result = str(present_year) + "-" + str(month) + "-" + str(date) + "_" + str(hours) + ":" + str(minutes) \
                  + ":" + str(seconds) + "." + str(milli_seconds)
         converted_time += result
 
+        #returning the converted time
         return converted_time
 
-
-# user_a = User()
-# user_a.validate_username("dasfdsaf_ddsfa___da")
-# user_a.validate_password("as2")
-# user_a.validate_email("d@a.com")
-# user_a.generate_unique_user_id()
-# user_a.authenticate_user("akash", "akash")
-# user_a.date_conversion(1637549590753)
