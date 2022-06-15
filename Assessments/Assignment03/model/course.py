@@ -1,3 +1,7 @@
+#Name: AKash Balakrishnan
+#Student ID: 32192886
+#Description: This class extracts the course data from the given source files.
+
 import os
 import json
 import pandas as pd
@@ -73,60 +77,78 @@ class Course:
             with open("./data/course.txt", "w+", encoding="utf-8") as course_file:
                 course_file.seek(0)
                 course_file.truncate()
+                course_file.seek(0)
         except:
             return "Something went wrong couldn't clear course data"
 
     def generate_page_num_list(self, page, total_pages):
         try:
-            page_number_list = []
-            if page <= 5:
-                page_number_list = [1,2,3,4,5,6,7,8,9]
+            if page > 0 and total_pages > 0:
+                if page <= 5:
+                    page_number_list = [1,2,3,4,5,6,7,8,9]
+                    return page_number_list
 
-            if 5 < page < (total_pages - 4):
-                boundary = 4
-                page_number_list.append(page)
-                for num in range(0,4):
-                    temp = page - boundary
-                    page_number_list.append(temp)
-                    temp = page + boundary
-                    page_number_list.append(temp)
-                    boundary -= 1
+                if 5 < page < (total_pages - 4):
+                    boundary = 4
+                    page_number_list = []
+                    for num in range(0,4):
+                        temp = page - boundary
+                        page_number_list.append(temp)
+                        temp = page + boundary
+                        page_number_list.append(temp)
+                        boundary -= 1
+                    page_number_list.sort()
+                    return page_number_list
 
-            elif page >= (total_pages - 4):
-                boundary = 8
-                page_number_list.append(total_pages)
-                for num in range(0, boundary):
-                    temp = total_pages - boundary
-                    page_number_list.append(temp)
-                    boundary -= 1
-            page_number_list.sort()
-            return page_number_list
+                elif page >= (total_pages - 4):
+                    boundary = 8
+                    page_number_list = []
+                    for num in range(0, boundary):
+                        temp = total_pages - boundary
+                        page_number_list.append(temp)
+                        boundary -= 1
+                    page_number_list.sort()
+                    return page_number_list
+                else:
+                    page_number_list = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                    return page_number_list
+            else:
+                return ([0])
 
         except:
-            return "Something went wrong while generating page numbers!"
+            return [0]
 
 
 
 
     def get_courses_by_page(self, page):
         try:
-            with open("./data/course.txt", "r+", encoding="utf-8") as course_file:
-                course_data = course_file.readlines()
-                num_of_courses = len(course_data)
-                total_pages = round(num_of_courses / 20)
-                line_range = page * 20
-                course_list = []
-                for each in range(line_range - 20, line_range):
-                    course = course_data[each]
-                    course_split_list = course.split(";;;")
-                    course_obj = Course(course_split_list[0], int(course_split_list[1]), course_split_list[2],
+            if page > 0:
+                with open("./data/course.txt", "r+", encoding="utf-8") as course_file:
+                    course_data = course_file.readlines()
+                    num_of_courses = len(course_data)
+                    if num_of_courses % 20 == 0:
+                        total_pages = num_of_courses / 20
+                    else:
+                        total_pages = (num_of_courses // 20) + 1
+                    if page != total_pages:
+                        line_range = page * 20
+                    else:
+                        line_range = page * 20 - (20 - num_of_courses % 20)
+                    course_list = []
+                    for each in range(line_range - 20, line_range):
+                        course = course_data[each]
+                        course_split_list = course.split(";;;")
+                        course_obj = Course(course_split_list[0], int(course_split_list[1]), course_split_list[2],
                                     course_split_list[3], course_split_list[4], int(course_split_list[5]),
                                     course_split_list[6], course_split_list[7], int(course_split_list[8]),
                                     float(course_split_list[9]), int(course_split_list[10]))
-                    course_list.append(course_obj)
-                return (course_list, total_pages, num_of_courses)
+                        course_list.append(course_obj)
+                    return (course_list, total_pages, num_of_courses)
+            else:
+                print("Invalid page number")
         except:
-            return "Something went wrong while getting course details by page!"
+            return(None,0,0)
 
 
 
@@ -197,7 +219,7 @@ class Course:
                         else:
                             comment += "General Courses"
 
-                        course_split_list = each.split(";;;")
+                        course_split_list = each.strip("\n").split(";;;")
                         course_obj = Course(course_split_list[0], int(course_split_list[1]), course_split_list[2],
                                         course_split_list[3], course_split_list[4], int(course_split_list[5]),
                                         course_split_list[6], course_split_list[7], int(course_split_list[8]),
@@ -225,7 +247,7 @@ class Course:
                         instructor_data = each.split(";;;")
                         instructor_text_id = int(instructor_data[0])
                         course_id_in_user = instructor_data[-1].strip("\n")
-                        if instructor_id == instructor_text_id:
+                        if int(instructor_id) == instructor_text_id:
                             course_id_list = course_id_in_user.split("--")
             with open("./data/course.txt", "r+", encoding="utf-8") as course_file:
                 course_data = course_file.readlines()
@@ -233,15 +255,23 @@ class Course:
                 for item in course_id_list:
                     for course_item in course_data:
                         course_id = course_item.split(";;;")[5]
-                        if item == course_id:
-                            course_list.append(course_item)
+                        if int(item) == int(course_id):
+                            course_split_list = course_item.strip("\n").split(";;;")
+                            course_obj = Course(course_split_list[0], int(course_split_list[1]), course_split_list[2],
+                                                course_split_list[3], course_split_list[4], int(course_split_list[5]),
+                                                course_split_list[6], course_split_list[7], int(course_split_list[8]),
+                                                float(course_split_list[9]), int(course_split_list[10]))
+                            course_list.append(course_obj)
 
                 if len(course_list) > 20:
+                    print((course_list[:20], len(course_list)))
                     return (course_list[:20], len(course_list))
                 else:
+                    print((course_list, len(course_list)))
                     return (course_list, len(course_list))
 
         except:
+            print("Exception")
             return "Something went wrong while getting course details by instructor id!"
 
 
@@ -489,9 +519,9 @@ class Course:
 course = Course()
 # course.clear_course_data()
 # course.get_courses()
-# course.generate_page_num_list(32,33)
-# course.get_courses_by_page(10)
+# course.generate_page_num_list(0,0)
+# course.get_courses_by_page(1110)
 # course.delete_course_by_id(772137256)
 # course.get_course_by_course_id(872028607)
-# course.get_course_by_instructor_id(612742716)
+# course.get_course_by_instructor_id(339388603)
 # course.generate_course_figure6()

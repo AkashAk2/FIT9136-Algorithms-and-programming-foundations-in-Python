@@ -15,18 +15,18 @@ model_student = Student()
 
 def generate_user(login_user_str):
     login_user = None  # a User object
-    user_info_list = (login_user_str.strip("\n")).split(";;;")
+    user_info_list = login_user_str.split(";;;")
     if user_info_list[4] == "admin":
         login_user = Admin(int(user_info_list[0]), user_info_list[1], user_info_list[2], user_info_list[3],
                            user_info_list[4])
     elif user_info_list[4] == "instructor":
         course_list = user_info_list[8].strip("\n").split("--")
-        login_user = Instructor(uid=int(user_info_list[0]), username=user_info_list[1], password=user_info_list[2],
+        login_user = Instructor(uid=user_info_list[0], username=user_info_list[1], password=user_info_list[2],
                                 register_time=user_info_list[3], role=user_info_list[4], email=user_info_list[5],
                                 display_name=user_info_list[6], job_title=user_info_list[7],
                                 course_id_list=course_list)
     elif user_info_list[4] == "student":
-        login_user = Student(int(user_info_list[0]), user_info_list[1], user_info_list[2], user_info_list[3],
+        login_user = Student(user_info_list[0], user_info_list[1], user_info_list[2], user_info_list[3],
                              user_info_list[4])
     print(type(login_user))
     return login_user
@@ -36,25 +36,22 @@ def generate_user(login_user_str):
 
 @user_page.route("/login", methods=["GET"])
 def login():
-    return render_template("00login.html")
+    return render_template('00login.html')
 
 
 @user_page.route("/login", methods=["POST"])
 def login_post():
     req = request.values
-    username = req["username"] if "username" in req else "null"
-    password = req["password"] if "password" in req else "null"
-    # context = {}
-    # context["user_obj"] = User()
-    if model_user.validate_username(username) is True and model_user.validate_password(password) is True:
+    username = req["username"]
+    password = req["password"]
+    if model_user.validate_username(username) == True and model_user.validate_password(password) == True:
         authentication = model_user.authenticate_user(username, password)
         print(authentication)
         if authentication[0] is True:
-            user_info_str = (authentication[1]).strip("\n")
-            User.current_login_user = generate_user(user_info_str)
-            return render_result("Successfully logged in!")
+            User.current_login_user = generate_user(authentication[1])
+            return render_result(msg="Successfully logged in!")
         else:
-            return render_err_result("Login failed! Check your username or password.")
+            return render_err_result(msg="Login failed! Check your username or password.")
 
 
 @user_page.route("/logout", methods=["GET"])
@@ -89,20 +86,22 @@ def register_post():
 def student_list():
     if User.current_login_user is not None:
         req = request.values
-        page = req['page'] if "page" in req else 1
+        page = int(req['page']) if "page" in req else 1
         context = {}
         # get values for one_page_instructor_list, total_pages, total_num
         student_details = model_student.get_students_by_page(page)
-        one_page_user_list = student_details[0]
+        print("Student_list")
+        print(student_details)
         total_pages = student_details[1]
         total_num = student_details[2]
         # get values for page_num_list
         page_num_list = model_course.generate_page_num_list(page=page, total_pages=total_pages)
         # check one_page_instructor_list, make sure this variable not be None, if None, assign it to []
-        if one_page_user_list is None:
-            context['one_page_instructor_list'] = []
+        if student_details[0] is None:
+            one_page_user_list = []
         else:
-            context['one_page_instructor_list'] = one_page_user_list
+            one_page_user_list = student_details[0]
+        context['one_page_user_list'] = one_page_user_list
         context['total_pages'] = total_pages
         context['page_num_list'] = page_num_list
         context['current_page'] = int(page)
@@ -112,7 +111,7 @@ def student_list():
     else:
         return redirect(url_for("index_page.index"))
 
-    return render_template("07instructor_list.html", **context)
+    return render_template("10student_list.html", **context)
 
 
 @user_page.route("/student-info", methods=["GET"])
@@ -120,12 +119,14 @@ def student_info():
     req = request.values
     context = {}
     if User.current_login_user is not None:
-        stud_id = int(req["id"]) if "id" in req else model_student.uid
+        stud_id = int(req["id"]) if "id" in req else User.current_login_user.uid
         stud_object = model_student.get_student_by_id(stud_id)
         context['current_user_role'] = User.current_login_user.role
-        return stud_object
+        context['student'] = stud_object
     else:
-        return render_err_result("Something went wrong while getting student information")
+        return redirect(url_for("index_page.index"))
+    return render_template("11student_info.html", **context)
+
 
 
 @user_page.route("/student-delete", methods=["GET"])

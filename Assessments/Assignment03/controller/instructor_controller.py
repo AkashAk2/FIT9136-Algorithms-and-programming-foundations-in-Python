@@ -18,7 +18,7 @@ model_course = Course()
 def instructor_list():
     if User.current_login_user is not None:
         req = request.values
-        page = req['page'] if "page" in req else 1
+        page = int(req['page']) if "page" in req else 1
         context = {}
         # get values for one_page_instructor_list, total_pages, total_num
         instructor_list = model_instructor.get_instructors_by_page(page)
@@ -28,10 +28,11 @@ def instructor_list():
         # get values for page_num_list
         page_num_list = model_course.generate_page_num_list(page=page, total_pages=total_pages)
         # check one_page_instructor_list, make sure this variable not be None, if None, assign it to []
-        if one_page_instructor_list is None:
-            context['one_page_instructor_list'] = []
+        if instructor_list[0] is None:
+            one_page_instructor_list = []
         else:
-            context['one_page_instructor_list'] = one_page_instructor_list
+            one_page_instructor_list = instructor_list[0]
+        context['one_page_instructor_list'] = one_page_instructor_list
         context['total_pages'] = total_pages
         context['page_num_list'] = page_num_list
         context['current_page'] = int(page)
@@ -49,7 +50,8 @@ def teach_courses():
 
     if User.current_login_user is not None:
         # get instructor id
-        instructor_id = int(User.current_login_user.uid)
+        req = request.values
+        instructor_id = int(req['id']) if 'id' in req else User.current_login_user.uid
         # get values for course_list, total_num
         search_result = model_course.get_course_by_instructor_id(instructor_id)
         if search_result[0] is None:

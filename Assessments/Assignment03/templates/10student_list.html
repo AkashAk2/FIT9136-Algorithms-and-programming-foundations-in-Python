@@ -28,9 +28,10 @@ User List
                 <th>#</th>
                 <th style="width:10%">Username</th>
                 <th style="width:10%">Password</th>
-                <th style="width:5%">Register Time</th>
+                <th>Register Time</th>
                 <th>Role</th>
-                <th style="width:10%">Email</th>
+                <th>Email</th>
+                <th>&nbsp;</th>
                 <th>&nbsp;</th>
             </tr>
             </thead>
@@ -40,12 +41,12 @@ User List
                 <td>{{loop.index}}</td>
                 <td style="width:10%; word-wrap: break-word;word-break:break-all;">{{student.username}}</td>
                 <td style="width:10%; word-wrap: break-word;word-break:break-all;">{{student.password}}</td>
-                <td style="width:5%; word-wrap: break-word;word-break:break-all;">{{student.register_time}}</td>
+                <td style="width:10%; word-wrap: break-word;word-break:break-all;">{{student.register_time}}</td>
                 <td>{{student.role}}</td>
                 <td style="width:10%; word-wrap: break-word;word-break:break-all;">{{student.email}}</td>
 
-                <td><a href="/user/student-info?id={{user.uid}}" target="_blank" class="btn btn-primary">Details</a></td>
-                <td><a href="/user/student-delete?id={{user.uid}}" target="_blank" class="btn btn-danger">Delete</a></td>
+                <td><a href="/user/student-info?id={{student.uid}}" target="_blank" class="btn btn-primary">Details</a></td>
+                <td><a href="/user/student-delete?id={{student.uid}}" target="_blank" class="btn btn-danger">Delete</a></td>
             </tr>
             {% endfor %}
             </tbody>

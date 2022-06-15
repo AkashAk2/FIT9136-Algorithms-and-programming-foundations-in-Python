@@ -1,9 +1,9 @@
 import re
 import random
-from lib.helper import get_day_from_timestamp
 
 
 class User:
+
     current_login_user = None
 
     def __init__(self, uid=-1, username="", password="", register_time="yyyy-MM-dd_HH:mm:ss.SSS", role=""):

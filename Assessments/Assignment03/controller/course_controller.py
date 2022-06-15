@@ -35,10 +35,11 @@ def course_list():
     context = {}
     if User.current_login_user is not None:
         req = request.values
-        page = req['page'] if "page" in req else 1
+        page = int(req['page']) if "page" in req else 1
 
         # get values for one_page_course_list, total_pages, total_num
         result = model_course.get_courses_by_page(page)
+        print("result course_list: " + str(result[0]))
         # check one_page_course_list, make sure this variable not be None, if None, assign it to []
         if result[0] is None:
             one_page_course_list = []

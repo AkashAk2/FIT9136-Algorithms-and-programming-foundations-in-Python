@@ -5,13 +5,10 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 
-class Instructor:
+class Instructor(User):
     def __init__(self, uid=-1, username="", password="", register_time="yyyy-MM-dd_HH:mm:ss.SSS",
                  role="instructor", email="", display_name="", job_title="", course_id_list=[]):
-        self.uid = uid
-        self.username = username
-        self.password = password
-        self.register_time = register_time
+        super().__init__(uid, username, password, register_time)
         self.role = role
         self.email = email
         self.display_name = display_name
@@ -19,8 +16,7 @@ class Instructor:
         self.course_id_list = course_id_list
 
     def __str__(self):
-        return str(self.uid) + ";;;" + self.username + ";;;" + self.password + ";;;" + self.register_time + ";;;" + \
-               self.role + ";;;" + self.email + ";;;" + self.display_name + ";;;" + self.job_title + ";;;" + \
+        return super().__str__() + self.role + ";;;" + self.email + ";;;" + self.display_name + ";;;" + self.job_title + ";;;" + \
                str(self.course_id_list)
 
     def get_instructors(self):
@@ -78,33 +74,46 @@ class Instructor:
 
 
     def get_instructors_by_page(self, page):
-        try:
-            with open("./data/user.txt", "r+", encoding="utf-8") as user_file:
-                user_data = user_file.readlines()
-                instructor_data = []
+        # try:
+            if page > 0:
+                with open("./data/user.txt", "r+", encoding="utf-8") as user_file:
+                    user_data = user_file.readlines()
+                    instructor_data = []
 
-                for item in user_data:
-                    split_list = item.split(";;;")
-                    if split_list[4] == "instructor":
-                        instructor_data.append(item)
+                    for item in user_data:
+                        split_list = item.split(";;;")
+                        if split_list[4] == "instructor":
+                            instructor_data.append(item)
 
-                total_instructors = len(instructor_data)
-                total_pages = round(total_instructors / 20)
-                line_range = page * 20
-                instructor_list = []
-                for each in range(line_range - 20, line_range):
-                    instructor = instructor_data[each]
-                    instructor_split_list = instructor.split(";;;")
-                    instructor_obj = Instructor(int(instructor_split_list[0]), instructor_split_list[1],
+                    total_instructors = len(instructor_data)
+                    if total_instructors % 20 == 0:
+                        total_pages = total_instructors // 20
+                    else:
+                        total_pages = (total_instructors // 20) + 1
+                    if page != total_pages:
+                        line_range = page * 20
+                    else:
+                        line_range = page * 20 - (20 - total_instructors % 20)
+                    instructor_list = []
+                    if total_instructors > 0:
+                        for each in range(line_range - 20, line_range):
+                            instructor = instructor_data[each]
+                            instructor_split_list = instructor.split(";;;")
+                            instructor_obj = Instructor(int(instructor_split_list[0]), instructor_split_list[1],
                                             instructor_split_list[2], instructor_split_list[3],
                                             instructor_split_list[4], instructor_split_list[5],
                                             instructor_split_list[6], instructor_split_list[7],
                                             [instructor_split_list[8]])
-                    instructor_list.append(instructor_obj)
-                result = (instructor_list, total_pages, total_instructors)
-                return result
-        except:
-            return "No Instructor records found!"
+                            instructor_list.append(instructor_obj)
+                        result = (instructor_list, total_pages, total_instructors)
+                    else:
+                        result = (instructor_list, total_pages, total_instructors)
+                    return result
+            else:
+                print("Invalid page number!")
+
+        # except:
+        #     return "No Instructor records found!"
 
     def generate_instructor_figure1(self):
         try:
@@ -147,5 +156,5 @@ class Instructor:
 
 instructor = Instructor()
 # instructor.get_instructors()
-# instructor.get_instructors_by_page(1)
+instructor.get_instructors_by_page(1)
 # instructor.generate_instructor_figure1()

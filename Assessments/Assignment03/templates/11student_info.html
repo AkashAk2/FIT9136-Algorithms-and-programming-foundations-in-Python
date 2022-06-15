@@ -14,17 +14,21 @@ Student Info
 {% block content%}
 <div class="container">
     <!-- student code start -->
+    {% if student_error_msg %}
+    <h1>{{student_error_msg}}</h1>
+    {% else %}
     <h1>Student Info</h1>
     <br/>
     <br/>
-    <p>Id: {{ user.uid }}</p>
+    <p>Id: {{student.uid}}</p>
     <br/>
-    <p>Username: {{ user.username }}</p>
+    <p>Username: {{student.username}}</p>
     <br/>
-    <p>Password: {{ user.password }}</p>
+    <p>Password: {{student.password}}</p>
     <br/>
-    <p>Email: {{ user.email }}</p>
+    <p>Email: {{student.email}}</p>
     <br/>
+    {% endif %}
     <!-- student code end -->
 </div>
 {% endblock%}
